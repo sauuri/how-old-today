@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:title" content="오늘 나 몇 살처럼 살았어?" />
+  <meta property="og:description" content="14가지 질문으로 알아보는 오늘의 내 생체나이" />
+  <title>오늘 나 몇 살처럼 살았어? 👴</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 40px 36px;
+      max-width: 520px;
+      width: 100%;
+      color: #fff;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    #intro { text-align: center; }
+    #intro .emoji { font-size: 72px; margin-bottom: 16px; }
+    #intro h1 { font-size: 26px; font-weight: 800; margin-bottom: 10px; line-height: 1.3; }
+    #intro p { font-size: 15px; color: rgba(255,255,255,0.6); margin-bottom: 32px; line-height: 1.7; }
+
+    .btn-start {
+      background: linear-gradient(135deg, #f97316, #ef4444);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 16px 40px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+      width: 100%;
+    }
+    .btn-start:hover { opacity: 0.88; transform: translateY(-2px); }
+
+    #quiz { display: none; }
+
+    .progress-bar {
+      background: rgba(255,255,255,0.1);
+      border-radius: 99px;
+      height: 6px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f97316, #ef4444);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    .q-count {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .q-text {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 28px;
+      line-height: 1.4;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .opt {
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 15px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .opt:hover {
+      background: rgba(249,115,22,0.25);
+      border-color: #f97316;
+      transform: translateX(4px);
+    }
+
+    #result { display: none; text-align: center; }
+
+    .age-display {
+      font-size: 90px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #f97316, #ef4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: popIn 0.5s ease;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .age-label {
+      font-size: 18px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .result-emoji { font-size: 48px; margin-bottom: 12px; }
+
+    .result-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .result-msg {
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.8;
+      margin-bottom: 24px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: left;
+      white-space: pre-line;
+    }
+
+    .result-real-age {
+      font-size: 13px;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 24px;
+    }
+
+    .btn-row { display: flex; gap: 12px; }
+
+    .btn-share {
+      flex: 1;
+      background: linear-gradient(135deg, #f97316, #ef4444);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-share:hover { opacity: 0.85; }
+
+    .btn-retry {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-retry:hover { background: rgba(255,255,255,0.14); }
+  </style>
+</head>
+<body>
+<div class="card">
+
+  <div id="intro">
+    <div class="emoji">👴</div>
+    <h1>오늘 나 몇 살처럼 살았어?</h1>
+    <p>오늘 하루 얼마나 건강하게 살았는지<br/>14가지 질문으로 생체나이를 판정해드립니다.<br/><br/>솔직하게 답할수록 정확합니다.</p>
+    <button class="btn-start" onclick="startQuiz()">나이 판정받기</button>
+  </div>
+
+  <div id="quiz">
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+    <div class="q-count" id="q-count"></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+  </div>
+
+  <div id="result">
+    <div class="age-display" id="r-age"></div>
+    <div class="age-label">살처럼 살았습니다</div>
+    <div class="result-emoji" id="r-emoji"></div>
+    <div class="result-title" id="r-title"></div>
+    <div class="result-msg" id="r-msg"></div>
+    <div class="result-real-age" id="r-real"></div>
+    <div class="btn-row">
+      <button class="btn-share" onclick="share()">결과 공유하기</button>
+      <button class="btn-retry" onclick="retry()">다시 하기</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    text: "어젯밤 몇 시간 잤어?",
+    options: [
+      { label: "8시간 이상 (완벽)", score: 0 },
+      { label: "6~7시간 (그럭저럭)", score: 5 },
+      { label: "4~5시간 (좀 부족)", score: 12 },
+      { label: "4시간 미만 (거의 안 잠)", score: 20 },
+    ]
+  },
+  {
+    text: "오늘 뭐 먹었어?",
+    options: [
+      { label: "집밥 또는 건강식", score: 0 },
+      { label: "배달 한 번", score: 6 },
+      { label: "배달 두 번 이상 (치킨+파스타 급)", score: 14 },
+      { label: "굶었음", score: 10 },
+    ]
+  },
+  {
+    text: "오늘 물 얼마나 마셨어?",
+    options: [
+      { label: "2L 이상 (건강왕)", score: 0 },
+      { label: "1L 정도", score: 5 },
+      { label: "커피만 마심", score: 12 },
+      { label: "뭐 마셨는지 기억 안 남", score: 16 },
+    ]
+  },
+  {
+    text: "오늘 운동했어?",
+    options: [
+      { label: "1시간 이상 운동함", score: -5 },
+      { label: "30분 정도 가볍게", score: -2 },
+      { label: "걷기 정도", score: 2 },
+      { label: "안 함 (눈운동만)", score: 10 },
+    ]
+  },
+  {
+    text: "오늘 햇빛 봤어?",
+    options: [
+      { label: "30분 이상 야외 있었음", score: 0 },
+      { label: "잠깐 나갔다 옴", score: 4 },
+      { label: "창문으로만 봄", score: 8 },
+      { label: "커튼 쳐서 못 봄", score: 14 },
+    ]
+  },
+  {
+    text: "폰 얼마나 봤어?",
+    options: [
+      { label: "2시간 미만", score: 0 },
+      { label: "4시간 정도", score: 6 },
+      { label: "6시간 이상", score: 12 },
+      { label: "하루종일 (손에서 뗀 적 없음)", score: 18 },
+    ]
+  },
+  {
+    text: "오늘 스트레스 받았어?",
+    options: [
+      { label: "평온했음", score: 0 },
+      { label: "조금 받았음", score: 5 },
+      { label: "꽤 받았음", score: 10 },
+      { label: "존나 받았음 (멘탈 탈탈)", score: 16 },
+    ]
+  },
+  {
+    text: "오늘 뭔가 생산적인 거 했어?",
+    options: [
+      { label: "많이 했음 (뿌듯함)", score: -5 },
+      { label: "조금 했음", score: 0 },
+      { label: "거의 못 했음", score: 8 },
+      { label: "유튜브가 전부였음", score: 14 },
+    ]
+  },
+  {
+    text: "카페인 얼마나 때렸어?",
+    options: [
+      { label: "안 마심", score: 0 },
+      { label: "커피 1잔", score: 3 },
+      { label: "커피 2~3잔", score: 8 },
+      { label: "에너지 드링크까지 (심장 두근)", score: 15 },
+    ]
+  },
+  {
+    text: "지금 허리 자세 어때?",
+    options: [
+      { label: "바르게 앉아있음", score: 0 },
+      { label: "약간 구부정함", score: 6 },
+      { label: "완전 새우등", score: 12 },
+      { label: "누워서 보는 중", score: 8 },
+    ]
+  },
+  {
+    text: "오늘 누군가랑 대화했어?",
+    options: [
+      { label: "여러 명이랑 실제로 만남", score: 0 },
+      { label: "전화나 카톡 정도", score: 4 },
+      { label: "거의 안 함", score: 9 },
+      { label: "AI랑만 대화함 (나 포함)", score: 12 },
+    ]
+  },
+  {
+    text: "야식 먹었어?",
+    options: [
+      { label: "안 먹었음", score: 0 },
+      { label: "조금 먹었음", score: 6 },
+      { label: "배터지게 먹었음", score: 13 },
+    ]
+  },
+  {
+    text: "오늘 웃은 적 있어?",
+    options: [
+      { label: "많이 웃었음", score: -4 },
+      { label: "조금 웃었음", score: 0 },
+      { label: "별로 없었음", score: 8 },
+      { label: "진지하게 한 번도 없음", score: 14 },
+    ]
+  },
+  {
+    text: "지금 몇 시야?",
+    options: [
+      { label: "오전 (건강한 시간)", score: 0 },
+      { label: "오후 6시 이전", score: 2 },
+      { label: "밤 10시 이후", score: 8 },
+      { label: "새벽... (이 시간에 이걸 함)", score: 16 },
+    ]
+  },
+];
+
+const RESULTS = [
+  {
+    maxAge: 22,
+    emoji: "✨",
+    title: "오늘 진짜 잘 살았다",
+    msg: "규칙적인 수면, 건강한 식사, 적당한 운동.\n당신은 오늘 교과서 같은 하루를 보냈습니다.\n이런 사람이 실제로 있다니 신기합니다.",
+  },
+  {
+    maxAge: 35,
+    emoji: "😊",
+    title: "나름 괜찮게 살았음",
+    msg: "완벽하진 않았지만 그래도 꽤 건강한 하루.\n조금만 더 자고, 물만 더 마셨으면 완벽했을 텐데.\n내일은 좀 더 잘해봐요.",
+  },
+  {
+    maxAge: 50,
+    emoji: "😐",
+    title: "평범한 현대인의 하루",
+    msg: "배달 시키고, 폰 보고, 스트레스 받고.\n나쁘진 않은데 좋지도 않은 하루.\n이대로 10년 가면 진짜 이 나이 됩니다.",
+  },
+  {
+    maxAge: 65,
+    emoji: "😮‍💨",
+    title: "몸이 버티고 있는 거임",
+    msg: "수면 부족, 배달 음식, 움직임 없음.\n지금 당장 큰일은 없겠지만...\n허리랑 눈은 이미 항의 중입니다.",
+  },
+  {
+    maxAge: 80,
+    emoji: "🧓",
+    title: "오늘 하루 많이 힘들었구나",
+    msg: "잠도 못 자고, 스트레스 받고, 안 움직이고.\n몸은 정직합니다. 오늘 학대당했습니다.\n내일은 제발 물 한 잔이라도 더 마셔요.",
+  },
+  {
+    maxAge: 9999,
+    emoji: "💀",
+    title: "오늘 당신은 전설이었습니다",
+    msg: "새벽에 혼자 배달 시키고, 폰 보고, 안 씻고, 안 움직이고.\n이 설문 결과를 캡처해서 병원에 가져가세요.\n그래도 이걸 하고 있다는 건 아직 살아있다는 뜻이니까 다행입니다.",
+  },
+];
+
+let current = 0;
+let totalScore = 0;
+let realAge = 20;
+
+function startQuiz() {
+  const now = new Date().getHours();
+  // 대략적인 실제 나이 추정 (없으면 기본값)
+  realAge = 20;
+  document.getElementById("intro").style.display = "none";
+  document.getElementById("quiz").style.display = "block";
+  current = 0;
+  totalScore = 0;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  const pct = (current / QUESTIONS.length) * 100;
+
+  document.getElementById("progress").style.width = pct + "%";
+  document.getElementById("q-count").textContent = `${current + 1} / ${QUESTIONS.length}`;
+  document.getElementById("q-text").textContent = q.text;
+
+  const opts = document.getElementById("options");
+  opts.innerHTML = "";
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = opt.label;
+    btn.onclick = () => answer(opt.score);
+    opts.appendChild(btn);
+  });
+}
+
+function answer(score) {
+  totalScore += score;
+  current++;
+  if (current < QUESTIONS.length) {
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("result").style.display = "block";
+  document.getElementById("progress").style.width = "100%";
+
+  // 기본 나이 20에서 점수 더하기
+  const bioAge = Math.max(16, Math.min(99, 20 + Math.round(totalScore * 0.6)));
+  const result = RESULTS.find(r => bioAge <= r.maxAge);
+
+  document.getElementById("r-age").textContent = bioAge;
+  document.getElementById("r-emoji").textContent = result.emoji;
+  document.getElementById("r-title").textContent = result.title;
+  document.getElementById("r-msg").textContent = result.msg;
+  document.getElementById("r-real").textContent = `(실제 나이랑 비교해보세요 ㅋㅋ)`;
+
+  window._bioAge = bioAge;
+  window._resultTitle = result.title;
+  window._resultEmoji = result.emoji;
+}
+
+function share() {
+  const text = `${window._resultEmoji} 오늘 나는 ${window._bioAge}살처럼 살았다\n"${window._resultTitle}"\n\n나도 해봐 👉 오늘 나 몇 살처럼 살았어? AI 판정기`;
+  if (navigator.share) {
+    navigator.share({ title: "오늘 나 몇 살처럼 살았어?", text });
+  } else {
+    navigator.clipboard.writeText(text);
+    alert("클립보드에 복사됐어! 붙여넣기해서 공유해줘 ㅋㅋ");
+  }
+}
+
+function retry() {
+  document.getElementById("result").style.display = "none";
+  document.getElementById("intro").style.display = "block";
+  document.getElementById("progress").style.width = "0%";
+}
+</script>
+</body>
+</html>
