@@ -11,480 +11,514 @@
   <meta property="og:url" content="https://sauuri.github.io/how-old-today/" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="오늘 나 몇 살처럼 살았어? 🎂" />
-  <meta name="twitter:description" content="14가지 질문으로 오늘의 체감 나이를 측정해드립니다" />
-  <meta name="twitter:image" content="https://sauuri.github.io/how-old-today/og.png" />
-  <title>오늘 나 몇 살처럼 살았어? 👴</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .card {
-      background: rgba(255,255,255,0.06);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 24px;
-      padding: 40px 36px;
-      max-width: 520px;
-      width: 100%;
-      color: #fff;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    }
-
-    #intro { text-align: center; }
-    #intro .emoji { font-size: 72px; margin-bottom: 16px; }
-    #intro h1 { font-size: 26px; font-weight: 800; margin-bottom: 10px; line-height: 1.3; }
-    #intro p { font-size: 15px; color: rgba(255,255,255,0.6); margin-bottom: 32px; line-height: 1.7; }
-
-    .btn-start {
-      background: linear-gradient(135deg, #f97316, #ef4444);
-      color: #fff;
-      border: none;
-      border-radius: 14px;
-      padding: 16px 40px;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.2s, opacity 0.2s;
-      width: 100%;
-    }
-    .btn-start:hover { opacity: 0.88; transform: translateY(-2px); }
-
-    #quiz { display: none; }
-
-    .progress-bar {
-      background: rgba(255,255,255,0.1);
-      border-radius: 99px;
-      height: 6px;
-      margin-bottom: 28px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #f97316, #ef4444);
-      border-radius: 99px;
-      transition: width 0.4s ease;
-    }
-
-    .q-count {
-      font-size: 12px;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 10px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    .q-text {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 28px;
-      line-height: 1.4;
-    }
-
-    .options {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .opt {
-      background: rgba(255,255,255,0.07);
-      border: 1.5px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-      padding: 14px 18px;
-      font-size: 15px;
-      color: #fff;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: left;
-    }
-    .opt:hover {
-      background: rgba(249,115,22,0.25);
-      border-color: #f97316;
-      transform: translateX(4px);
-    }
-
-    #result { display: none; text-align: center; }
-
-    .age-display {
-      font-size: 90px;
-      font-weight: 900;
-      line-height: 1;
-      margin-bottom: 8px;
-      background: linear-gradient(135deg, #f97316, #ef4444);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: popIn 0.5s ease;
-    }
-
-    @keyframes popIn {
-      0% { transform: scale(0.5); opacity: 0; }
-      70% { transform: scale(1.1); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .age-label {
-      font-size: 18px;
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 20px;
-      font-weight: 600;
-    }
-
-    .result-emoji { font-size: 48px; margin-bottom: 12px; }
-
-    .result-title {
-      font-size: 22px;
-      font-weight: 800;
-      margin-bottom: 16px;
-      line-height: 1.3;
-    }
-
-    .result-msg {
-      font-size: 14px;
-      color: rgba(255,255,255,0.65);
-      line-height: 1.8;
-      margin-bottom: 24px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 14px;
-      padding: 18px;
-      text-align: left;
-      white-space: pre-line;
-    }
-
-    .result-real-age {
-      font-size: 13px;
-      color: rgba(255,255,255,0.3);
-      margin-bottom: 24px;
-    }
-
-    .btn-row { display: flex; gap: 12px; }
-
-    .btn-share {
-      flex: 1;
-      background: linear-gradient(135deg, #f97316, #ef4444);
-      color: #fff;
-      border: none;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    .btn-share:hover { opacity: 0.85; }
-
-    .btn-retry {
-      flex: 1;
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      border: 1.5px solid rgba(255,255,255,0.15);
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-retry:hover { background: rgba(255,255,255,0.14); }
-  </style>
+  <title>오늘 나 몇 살처럼 살았어? 🎂</title>
   <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      background: #0f0a02;
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      color: #fef3e2;
+      overflow-x: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 70% 15%, #fb923c22 0%, transparent 55%),
+        radial-gradient(ellipse at 20% 85%, #ea580c18 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, #7c2d1220 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* 불꽃 파티클 */
+    .sparks { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .spark {
+      position: absolute;
+      font-size: var(--s, 12px);
+      animation: floatUp var(--d, 6s) ease-in infinite;
+      animation-delay: var(--delay, 0s); opacity: 0;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.3; }
+      90%  { opacity: 0.1; }
+      100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
+    }
+
+    .confetti-piece {
+      position: fixed; top: -12px; width: 8px; height: 8px; border-radius: 2px;
+      pointer-events: none; z-index: 999;
+      animation: confettiFall var(--cd, 1.5s) ease-in var(--cdelay, 0s) forwards;
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    .container { position: relative; z-index: 1; width: 100%; max-width: 460px; padding: 20px 16px 40px; }
+
+    /* INTRO */
+    .intro-card {
+      background: linear-gradient(145deg, #1c1002, #150c02);
+      border: 1px solid rgba(251,146,60,0.2);
+      border-radius: 28px; overflow: hidden;
+      box-shadow: 0 16px 60px rgba(251,146,60,0.18), 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .intro-card-top { padding: 40px 28px 32px; text-align: center; position: relative; }
+    .intro-card-top::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(251,146,60,0.2) 0%, transparent 70%);
+    }
+    .intro { text-align: center; position: relative; z-index: 1; }
+    .intro-icon { font-size: 90px; display: block; margin-bottom: 28px; animation: wobble 2s ease-in-out infinite; }
+    @keyframes wobble {
+      0%, 100% { transform: rotate(-5deg) scale(1); }
+      50%       { transform: rotate(5deg) scale(1.08); }
+    }
+    .intro h1 {
+      font-size: 30px; font-weight: 900; margin-bottom: 10px; line-height: 1.2;
+      background: linear-gradient(135deg, #fdba74 20%, #fb923c 60%, #ea580c);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .intro-desc { font-size: 15px; color: #7a5a3a; line-height: 1.9; margin-bottom: 36px; }
+    .intro-desc strong { color: #fb923c; }
+    .intro-tags { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+    .intro-tag {
+      background: rgba(251,146,60,0.1); border: 1px solid rgba(251,146,60,0.25);
+      color: #fb923c; font-size: 12px; font-weight: 700;
+      padding: 5px 14px; border-radius: 20px;
+    }
+    .start-btn {
+      background: linear-gradient(135deg, #c2410c, #ea580c, #fb923c);
+      color: white; border: none; padding: 16px 52px; border-radius: 50px;
+      font-size: 17px; font-weight: 800; cursor: pointer;
+      transition: all 0.3s; font-family: inherit;
+      box-shadow: 0 6px 28px rgba(234,88,12,0.45); letter-spacing: 0.5px;
+    }
+    .start-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(234,88,12,0.6); }
+
+    /* PROGRESS */
+    .progress-wrap { margin-bottom: 20px; }
+    .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: none; border: none; cursor: pointer;
+      color: #6a4a2a; font-size: 13px; font-weight: 700;
+      font-family: inherit; padding: 0; margin-bottom: 14px; transition: color 0.2s;
+    }
+    .back-btn:hover { color: #fb923c; }
+    .back-btn:disabled { opacity: 0.25; cursor: default; }
+    .progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .progress-label { font-size: 12px; color: #6a4a2a; font-weight: 700; letter-spacing: 0.5px; }
+    .progress-count { font-size: 13px; color: #ea580c; font-weight: 800; }
+    .progress-bar { width: 100%; height: 7px; background: rgba(234,88,12,0.12); border-radius: 4px; overflow: hidden; }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, #c2410c, #ea580c, #fb923c);
+      border-radius: 4px; transition: width 0.45s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: 0 0 8px rgba(234,88,12,0.5);
+    }
+
+    /* QUESTION CARD */
+    .card {
+      background: linear-gradient(145deg, #1c1002, #150c02);
+      border: 1px solid rgba(251,146,60,0.2); border-radius: 26px; padding: 30px 24px;
+      box-shadow: 0 8px 40px rgba(251,146,60,0.08), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .question-card { animation: slideIn 0.38s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(28px) scale(0.97); }
+      to   { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    .q-emoji { font-size: 42px; display: block; margin-bottom: 16px; }
+    .q-num {
+      display: inline-block; font-size: 11px; font-weight: 800;
+      color: #ea580c; letter-spacing: 1.5px; text-transform: uppercase;
+      background: rgba(234,88,12,0.1); border: 1px solid rgba(234,88,12,0.2);
+      padding: 3px 10px; border-radius: 20px; margin-bottom: 12px;
+    }
+    .q-text { font-size: 19px; font-weight: 700; line-height: 1.55; margin-bottom: 24px; color: #fef3e2; }
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .option-btn {
+      background: rgba(255,255,255,0.03); border: 1.5px solid rgba(251,146,60,0.15);
+      border-radius: 16px; padding: 14px 16px; text-align: left; cursor: pointer;
+      transition: all 0.22s; display: flex; align-items: center; gap: 12px;
+      font-size: 15px; color: #b08060; font-family: inherit; position: relative; overflow: hidden;
+    }
+    .option-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(234,88,12,0.08), transparent);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .option-btn:hover { border-color: rgba(251,146,60,0.5); color: #fef3e2; transform: translateX(5px); }
+    .option-btn:hover::before { opacity: 1; }
+    .option-btn.selected {
+      background: linear-gradient(135deg, rgba(194,65,12,0.25), rgba(234,88,12,0.15));
+      border-color: #ea580c; color: white; box-shadow: 0 4px 20px rgba(234,88,12,0.25);
+    }
+
+    /* RESULT */
+    .result-outer { animation: resultReveal 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+    @keyframes resultReveal {
+      from { opacity: 0; transform: scale(0.9) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .result-card {
+      background: linear-gradient(145deg, #1c1002, #150c02);
+      border-radius: 28px; overflow: hidden;
+      box-shadow: 0 16px 60px rgba(251,146,60,0.18), 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .result-hero {
+      padding: 36px 28px 28px; text-align: center; position: relative;
+    }
+    .result-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--hero-bg, radial-gradient(ellipse at 50% 0%, rgba(251,146,60,0.2) 0%, transparent 70%));
+    }
+    .age-number {
+      font-size: 96px; font-weight: 900; line-height: 1;
+      background: linear-gradient(135deg, #fdba74, #fb923c, #ea580c);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      display: block; margin-bottom: 4px; position: relative; z-index: 1;
+      animation: popIn 0.55s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
+    }
+    @keyframes popIn {
+      from { transform: scale(0) rotate(-15deg); }
+      to   { transform: scale(1) rotate(0deg); }
+    }
+    .age-label {
+      font-size: 16px; color: rgba(254,243,226,0.5); font-weight: 600;
+      margin-bottom: 20px; position: relative; z-index: 1;
+    }
+    .result-emoji { font-size: 52px; display: block; margin-bottom: 12px; position: relative; z-index: 1; }
+    .result-badge {
+      display: inline-block; padding: 6px 18px; border-radius: 50px;
+      font-size: 12px; font-weight: 800; letter-spacing: 1px;
+      margin-bottom: 14px; position: relative; z-index: 1;
+      background: var(--badge-bg); color: var(--badge-color); border: 1px solid var(--badge-border);
+    }
+    .result-title {
+      font-size: 22px; font-weight: 900; line-height: 1.35;
+      margin-bottom: 8px; position: relative; z-index: 1;
+      color: var(--title-color);
+    }
+    .result-sub { font-size: 14px; color: #7a5a3a; line-height: 1.85; position: relative; z-index: 1; }
+
+    .advice-section { padding: 22px 28px; }
+    .advice-box {
+      background: rgba(251,146,60,0.06); border: 1px solid rgba(251,146,60,0.15);
+      border-radius: 18px; padding: 18px 20px; margin-bottom: 20px;
+    }
+    .advice-tag { font-size: 10px; font-weight: 800; color: #ea580c; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+    .advice-text { font-size: 14px; color: #b08060; line-height: 1.85; }
+    .ad-wrap { text-align: center; margin-bottom: 20px; }
+    .action-btns { display: flex; flex-direction: column; gap: 10px; }
+    .primary-btn {
+      background: linear-gradient(135deg, #c2410c, #ea580c);
+      color: white; border: none; padding: 15px; border-radius: 16px;
+      font-size: 16px; font-weight: 800; cursor: pointer;
+      transition: all 0.22s; font-family: inherit;
+      box-shadow: 0 6px 24px rgba(234,88,12,0.35);
+    }
+    .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(234,88,12,0.5); }
+    .secondary-btn {
+      background: rgba(234,88,12,0.08); color: #fb923c;
+      border: 1.5px solid rgba(234,88,12,0.25); padding: 15px; border-radius: 16px;
+      font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.22s; font-family: inherit;
+    }
+    .secondary-btn:hover { background: rgba(234,88,12,0.14); border-color: rgba(234,88,12,0.45); }
+
+    .toast {
+      position: fixed; bottom: 32px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1c1002; border: 1px solid rgba(251,146,60,0.4);
+      color: #fb923c; padding: 12px 26px; border-radius: 50px;
+      font-size: 14px; font-weight: 700; z-index: 999;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    .g0 { --title-color:#34d399; --badge-bg:rgba(52,211,153,0.12); --badge-color:#34d399; --badge-border:rgba(52,211,153,0.3); --hero-bg:radial-gradient(ellipse at 50% 0%,rgba(52,211,153,0.18) 0%,transparent 70%); }
+    .g1 { --title-color:#fb923c; --badge-bg:rgba(251,146,60,0.12); --badge-color:#fb923c; --badge-border:rgba(251,146,60,0.3); --hero-bg:radial-gradient(ellipse at 50% 0%,rgba(251,146,60,0.2) 0%,transparent 70%); }
+    .g2 { --title-color:#fbbf24; --badge-bg:rgba(251,191,36,0.12); --badge-color:#fbbf24; --badge-border:rgba(251,191,36,0.3); --hero-bg:radial-gradient(ellipse at 50% 0%,rgba(251,191,36,0.18) 0%,transparent 70%); }
+    .g3 { --title-color:#f97316; --badge-bg:rgba(249,115,22,0.12); --badge-color:#f97316; --badge-border:rgba(249,115,22,0.3); --hero-bg:radial-gradient(ellipse at 50% 0%,rgba(249,115,22,0.2) 0%,transparent 70%); }
+    .g4 { --title-color:#ef4444; --badge-bg:rgba(239,68,68,0.12); --badge-color:#ef4444; --badge-border:rgba(239,68,68,0.3); --hero-bg:radial-gradient(ellipse at 50% 0%,rgba(239,68,68,0.22) 0%,transparent 70%); }
+    .g5 { --title-color:#dc2626; --badge-bg:rgba(220,38,38,0.15); --badge-color:#f87171; --badge-border:rgba(220,38,38,0.4); --hero-bg:radial-gradient(ellipse at 50% 0%,rgba(220,38,38,0.28) 0%,transparent 70%); }
+  </style>
 </head>
 <body>
-<div class="card">
+<div class="sparks" id="sparks"></div>
+<div class="container">
 
-  <div id="intro">
-    <div class="emoji">👴</div>
-    <h1>오늘 나 몇 살처럼 살았어?</h1>
-    <p>오늘 하루 얼마나 건강하게 살았는지<br/>14가지 질문으로 생체나이를 판정해드립니다.<br/><br/>솔직하게 답할수록 정확합니다.</p>
-    <button class="btn-start" onclick="startQuiz()">나이 판정받기</button>
-  </div>
-
-  <div id="quiz">
-    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-    <div class="q-count" id="q-count"></div>
-    <div class="q-text" id="q-text"></div>
-    <div class="options" id="options"></div>
-  </div>
-
-  <div id="result">
-    <div class="age-display" id="r-age"></div>
-    <div class="age-label">살처럼 살았습니다</div>
-    <div class="result-emoji" id="r-emoji"></div>
-    <div class="result-title" id="r-title"></div>
-    <div class="result-msg" id="r-msg"></div>
-    <div class="result-real-age" id="r-real"></div>
-    <div style="text-align:center;margin:24px 0 8px">
-      <ins class="kakao_ad_area" style="display:none;"
-        data-ad-unit="DAN-PVu656ucRpjzw2zW"
-        data-ad-width="320"
-        data-ad-height="50"></ins>
-    </div>
-    <div class="btn-row">
-      <button class="btn-share" onclick="share()">결과 공유하기</button>
-      <button class="btn-retry" onclick="retry()">다시 하기</button>
+  <!-- INTRO -->
+  <div id="screen-intro">
+    <div class="intro-card">
+      <div class="intro-card-top">
+        <div class="intro">
+          <span class="intro-icon">🎂</span>
+          <h1>오늘 나 몇 살처럼<br>살았어?</h1>
+          <p class="intro-desc">
+            오늘 하루 얼마나 건강하게 살았는지<br>
+            <strong>14가지 질문</strong>으로 체감 나이를 판정해줄게.<br>
+            솔직하게 답해야 정확해.
+          </p>
+          <div class="intro-tags">
+            <span class="intro-tag">🎂 14문제</span>
+            <span class="intro-tag">⏱ 1분</span>
+            <span class="intro-tag">💯 익명</span>
+          </div>
+          <button class="start-btn" onclick="startQuiz()">나이 판정받기 →</button>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- QUIZ -->
+  <div id="screen-quiz" style="display:none">
+    <button class="back-btn" id="back-btn" onclick="goBack()">← 이전</button>
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span class="progress-label">🎂 체감 나이 측정 중</span>
+        <span class="progress-count" id="prog-count">1 / 14</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="card"><div class="question-card" id="qcard"></div></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result" style="display:none"></div>
 </div>
+<div class="toast" id="toast">🔗 링크 복사됐어!</div>
 
 <script>
-const QUESTIONS = [
-  {
-    text: "어젯밤 몇 시간 잤어?",
-    options: [
-      { label: "8시간 이상 (완벽)", score: 0 },
-      { label: "6~7시간 (그럭저럭)", score: 5 },
-      { label: "4~5시간 (좀 부족)", score: 12 },
-      { label: "4시간 미만 (거의 안 잠)", score: 20 },
-    ]
-  },
-  {
-    text: "오늘 뭐 먹었어?",
-    options: [
-      { label: "집밥 또는 건강식", score: 0 },
-      { label: "배달 한 번", score: 6 },
-      { label: "배달 두 번 이상 (치킨+파스타 급)", score: 14 },
-      { label: "굶었음", score: 10 },
-    ]
-  },
-  {
-    text: "오늘 물 얼마나 마셨어?",
-    options: [
-      { label: "2L 이상 (건강왕)", score: 0 },
-      { label: "1L 정도", score: 5 },
-      { label: "커피만 마심", score: 12 },
-      { label: "뭐 마셨는지 기억 안 남", score: 16 },
-    ]
-  },
-  {
-    text: "오늘 운동했어?",
-    options: [
-      { label: "1시간 이상 운동함", score: -5 },
-      { label: "30분 정도 가볍게", score: -2 },
-      { label: "걷기 정도", score: 2 },
-      { label: "안 함 (눈운동만)", score: 10 },
-    ]
-  },
-  {
-    text: "오늘 햇빛 봤어?",
-    options: [
-      { label: "30분 이상 야외 있었음", score: 0 },
-      { label: "잠깐 나갔다 옴", score: 4 },
-      { label: "창문으로만 봄", score: 8 },
-      { label: "커튼 쳐서 못 봄", score: 14 },
-    ]
-  },
-  {
-    text: "폰 얼마나 봤어?",
-    options: [
-      { label: "2시간 미만", score: 0 },
-      { label: "4시간 정도", score: 6 },
-      { label: "6시간 이상", score: 12 },
-      { label: "하루종일 (손에서 뗀 적 없음)", score: 18 },
-    ]
-  },
-  {
-    text: "오늘 스트레스 받았어?",
-    options: [
-      { label: "평온했음", score: 0 },
-      { label: "조금 받았음", score: 5 },
-      { label: "꽤 받았음", score: 10 },
-      { label: "엄청 받았음 (멘탈 탈탈)", score: 16 },
-    ]
-  },
-  {
-    text: "오늘 뭔가 생산적인 거 했어?",
-    options: [
-      { label: "많이 했음 (뿌듯함)", score: -5 },
-      { label: "조금 했음", score: 0 },
-      { label: "거의 못 했음", score: 8 },
-      { label: "유튜브가 전부였음", score: 14 },
-    ]
-  },
-  {
-    text: "카페인 얼마나 때렸어?",
-    options: [
-      { label: "안 마심", score: 0 },
-      { label: "커피 1잔", score: 3 },
-      { label: "커피 2~3잔", score: 8 },
-      { label: "에너지 드링크까지 (심장 두근)", score: 15 },
-    ]
-  },
-  {
-    text: "지금 허리 자세 어때?",
-    options: [
-      { label: "바르게 앉아있음", score: 0 },
-      { label: "약간 구부정함", score: 6 },
-      { label: "완전 새우등", score: 12 },
-      { label: "누워서 보는 중", score: 8 },
-    ]
-  },
-  {
-    text: "오늘 누군가랑 대화했어?",
-    options: [
-      { label: "여러 명이랑 실제로 만남", score: 0 },
-      { label: "전화나 카톡 정도", score: 4 },
-      { label: "거의 안 함", score: 9 },
-      { label: "AI랑만 대화함 (나 포함)", score: 12 },
-    ]
-  },
-  {
-    text: "야식 먹었어?",
-    options: [
-      { label: "안 먹었음", score: 0 },
-      { label: "조금 먹었음", score: 6 },
-      { label: "배터지게 먹었음", score: 13 },
-    ]
-  },
-  {
-    text: "오늘 웃은 적 있어?",
-    options: [
-      { label: "많이 웃었음", score: -4 },
-      { label: "조금 웃었음", score: 0 },
-      { label: "별로 없었음", score: 8 },
-      { label: "진지하게 한 번도 없음", score: 14 },
-    ]
-  },
-  {
-    text: "지금 몇 시야?",
-    options: [
-      { label: "오전 (건강한 시간)", score: 0 },
-      { label: "오후 6시 이전", score: 2 },
-      { label: "밤 10시 이후", score: 8 },
-      { label: "새벽... (이 시간에 이걸 함)", score: 16 },
-    ]
-  },
-];
-
-const RESULTS = [
-  {
-    maxAge: 22,
-    emoji: "✨",
-    title: "오늘 진짜 잘 살았다",
-    msg: "규칙적인 수면, 건강한 식사, 적당한 운동.\n당신은 오늘 교과서 같은 하루를 보냈습니다.\n이런 사람이 실제로 있다니 신기합니다.",
-  },
-  {
-    maxAge: 35,
-    emoji: "😊",
-    title: "나름 괜찮게 살았음",
-    msg: "완벽하진 않았지만 그래도 꽤 건강한 하루.\n조금만 더 자고, 물만 더 마셨으면 완벽했을 텐데.\n내일은 좀 더 잘해봐요.",
-  },
-  {
-    maxAge: 50,
-    emoji: "😐",
-    title: "평범한 현대인의 하루",
-    msg: "배달 시키고, 폰 보고, 스트레스 받고.\n나쁘진 않은데 좋지도 않은 하루.\n이대로 10년 가면 진짜 이 나이 됩니다.",
-  },
-  {
-    maxAge: 65,
-    emoji: "😮‍💨",
-    title: "몸이 버티고 있는 거임",
-    msg: "수면 부족, 배달 음식, 움직임 없음.\n지금 당장 큰일은 없겠지만...\n허리랑 눈은 이미 항의 중입니다.",
-  },
-  {
-    maxAge: 80,
-    emoji: "🧓",
-    title: "오늘 하루 많이 힘들었구나",
-    msg: "잠도 못 자고, 스트레스 받고, 안 움직이고.\n몸은 정직합니다. 오늘 학대당했습니다.\n내일은 제발 물 한 잔이라도 더 마셔요.",
-  },
-  {
-    maxAge: 9999,
-    emoji: "💀",
-    title: "오늘 당신은 전설이었습니다",
-    msg: "새벽에 혼자 배달 시키고, 폰 보고, 안 씻고, 안 움직이고.\n이 설문 결과를 캡처해서 병원에 가져가세요.\n그래도 이걸 하고 있다는 건 아직 살아있다는 뜻이니까 다행입니다.",
-  },
-];
-
-let current = 0;
-let totalScore = 0;
-let realAge = 20;
-
-function startQuiz() {
-  const now = new Date().getHours();
-  // 대략적인 실제 나이 추정 (없으면 기본값)
-  realAge = 20;
-  document.getElementById("intro").style.display = "none";
-  document.getElementById("quiz").style.display = "block";
-  current = 0;
-  totalScore = 0;
-  renderQuestion();
-}
-
-function renderQuestion() {
-  const q = QUESTIONS[current];
-  const pct = (current / QUESTIONS.length) * 100;
-
-  document.getElementById("progress").style.width = pct + "%";
-  document.getElementById("q-count").textContent = `${current + 1} / ${QUESTIONS.length}`;
-  document.getElementById("q-text").textContent = q.text;
-
-  const opts = document.getElementById("options");
-  opts.innerHTML = "";
-  q.options.forEach(opt => {
-    const btn = document.createElement("button");
-    btn.className = "opt";
-    btn.textContent = opt.label;
-    btn.onclick = () => answer(opt.score);
-    opts.appendChild(btn);
+  const sparksEl = document.getElementById('sparks');
+  ['🔥','✨','⚡','💫'].forEach((e, idx) => {
+    for (let i = 0; i < 4; i++) {
+      const s = document.createElement('div');
+      s.className = 'spark';
+      s.textContent = e;
+      s.style.cssText = `left:${Math.random()*100}%;--s:${Math.random()*12+8}px;--d:${(Math.random()*8+5).toFixed(1)}s;--delay:${(Math.random()*8).toFixed(1)}s`;
+      sparksEl.appendChild(s);
+    }
   });
-}
 
-function answer(score) {
-  totalScore += score;
-  current++;
-  if (current < QUESTIONS.length) {
-    renderQuestion();
-  } else {
-    showResult();
+  function launchConfetti() {
+    const colors = ['#fb923c','#fdba74','#ea580c','#fbbf24','#fde68a','#fed7aa'];
+    for (let i = 0; i < 60; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = `left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};--cd:${(Math.random()*1.5+1).toFixed(2)}s;--cdelay:${(Math.random()*0.8).toFixed(2)}s;width:${Math.random()*8+4}px;height:${Math.random()*8+4}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
   }
-}
 
-function showResult() {
-  document.getElementById("quiz").style.display = "none";
-  document.getElementById("result").style.display = "block";
-  document.getElementById("progress").style.width = "100%";
+  const QUESTIONS = [
+    { emoji:'😴', text:'어젯밤 몇 시간 잤어?', options:[
+      { text:'8시간 이상 (완벽)', score:0 },
+      { text:'6~7시간 (그럭저럭)', score:5 },
+      { text:'4~5시간 (좀 부족)', score:12 },
+      { text:'4시간 미만 (거의 안 잠)', score:20 },
+    ]},
+    { emoji:'🍽️', text:'오늘 뭐 먹었어?', options:[
+      { text:'집밥 또는 건강식', score:0 },
+      { text:'배달 한 번', score:6 },
+      { text:'배달 두 번 이상', score:14 },
+      { text:'굶었음', score:10 },
+    ]},
+    { emoji:'💧', text:'오늘 물 얼마나 마셨어?', options:[
+      { text:'2L 이상 (건강왕)', score:0 },
+      { text:'1L 정도', score:5 },
+      { text:'커피만 마심', score:12 },
+      { text:'뭐 마셨는지 기억 안 남', score:16 },
+    ]},
+    { emoji:'🏃', text:'오늘 운동했어?', options:[
+      { text:'1시간 이상 운동함', score:-5 },
+      { text:'30분 정도 가볍게', score:-2 },
+      { text:'걷기 정도', score:2 },
+      { text:'안 함 (눈운동만)', score:10 },
+    ]},
+    { emoji:'☀️', text:'오늘 햇빛 봤어?', options:[
+      { text:'30분 이상 야외 있었음', score:0 },
+      { text:'잠깐 나갔다 옴', score:4 },
+      { text:'창문으로만 봄', score:8 },
+      { text:'커튼 쳐서 못 봄', score:14 },
+    ]},
+    { emoji:'📱', text:'폰 얼마나 봤어?', options:[
+      { text:'2시간 미만', score:0 },
+      { text:'4시간 정도', score:6 },
+      { text:'6시간 이상', score:12 },
+      { text:'하루종일 (손에서 뗀 적 없음)', score:18 },
+    ]},
+    { emoji:'😤', text:'오늘 스트레스 받았어?', options:[
+      { text:'평온했음', score:0 },
+      { text:'조금 받았음', score:5 },
+      { text:'꽤 받았음', score:10 },
+      { text:'엄청 받았음 (멘탈 탈탈)', score:16 },
+    ]},
+    { emoji:'💪', text:'오늘 뭔가 생산적인 거 했어?', options:[
+      { text:'많이 했음 (뿌듯함)', score:-5 },
+      { text:'조금 했음', score:0 },
+      { text:'거의 못 했음', score:8 },
+      { text:'유튜브가 전부였음', score:14 },
+    ]},
+    { emoji:'☕', text:'카페인 얼마나 때렸어?', options:[
+      { text:'안 마심', score:0 },
+      { text:'커피 1잔', score:3 },
+      { text:'커피 2~3잔', score:8 },
+      { text:'에너지 드링크까지 (심장 두근)', score:15 },
+    ]},
+    { emoji:'🪑', text:'지금 허리 자세 어때?', options:[
+      { text:'바르게 앉아있음', score:0 },
+      { text:'약간 구부정함', score:6 },
+      { text:'완전 새우등', score:12 },
+      { text:'누워서 보는 중', score:8 },
+    ]},
+    { emoji:'💬', text:'오늘 누군가랑 대화했어?', options:[
+      { text:'여러 명이랑 실제로 만남', score:0 },
+      { text:'전화나 카톡 정도', score:4 },
+      { text:'거의 안 함', score:9 },
+      { text:'AI랑만 대화함', score:12 },
+    ]},
+    { emoji:'🌙', text:'야식 먹었어?', options:[
+      { text:'안 먹었음', score:0 },
+      { text:'조금 먹었음', score:6 },
+      { text:'배터지게 먹었음', score:13 },
+    ]},
+    { emoji:'😄', text:'오늘 웃은 적 있어?', options:[
+      { text:'많이 웃었음', score:-4 },
+      { text:'조금 웃었음', score:0 },
+      { text:'별로 없었음', score:8 },
+      { text:'한 번도 없음', score:14 },
+    ]},
+    { emoji:'🕐', text:'지금 몇 시야?', options:[
+      { text:'오전 (건강한 시간)', score:0 },
+      { text:'오후 6시 이전', score:2 },
+      { text:'밤 10시 이후', score:8 },
+      { text:'새벽... (이 시간에 이걸 함)', score:16 },
+    ]},
+  ];
 
-  // 기본 나이 20에서 점수 더하기
-  const bioAge = Math.max(16, Math.min(99, 20 + Math.round(totalScore * 0.6)));
-  const result = RESULTS.find(r => bioAge <= r.maxAge);
+  const RESULTS = [
+    { key:'g0', emoji:'✨', badge:'오늘의 건강왕', title:'오늘 진짜 잘 살았다', advice:'이런 하루를 계속 이어가봐. 좋은 루틴이 만들어지고 있어.' },
+    { key:'g1', emoji:'😊', badge:'나름 괜찮음',   title:'나름 괜찮게 살았음', advice:'조금만 더 자고 물만 더 마셨으면 완벽했을 텐데. 내일은 더 잘해봐.' },
+    { key:'g2', emoji:'😐', badge:'평범한 현대인', title:'평범한 현대인의 하루', advice:'나쁘진 않은데 좋지도 않아. 이대로 10년 가면 진짜 이 나이 됩니다.' },
+    { key:'g3', emoji:'😮‍💨', badge:'몸이 버티는 중', title:'몸이 버티고 있는 거임', advice:'지금 당장 큰일은 없겠지만 허리랑 눈은 이미 항의 중이야.' },
+    { key:'g4', emoji:'🧓', badge:'몸 혹사',       title:'오늘 하루 많이 힘들었구나', advice:'잠도 못 자고 스트레스 받고 안 움직이고. 내일은 물 한 잔이라도 더.' },
+    { key:'g5', emoji:'💀', badge:'전설급 하루',   title:'오늘 당신은 전설이었습니다', advice:'이 결과를 캡처해서 병원에 가져가세요. 그래도 살아있으니 다행이야.' },
+  ];
 
-  document.getElementById("r-age").textContent = bioAge;
-  document.getElementById("r-emoji").textContent = result.emoji;
-  document.getElementById("r-title").textContent = result.title;
-  document.getElementById("r-msg").textContent = result.msg;
-  document.getElementById("r-real").textContent = `(실제 나이랑 비교해보세요 ㅋㅋ)`;
+  const AGE_BRACKETS = [22, 35, 50, 65, 80, 9999];
 
-  window._bioAge = bioAge;
-  window._resultTitle = result.title;
-  window._resultEmoji = result.emoji;
-}
+  let cur = 0, answers = [];
 
-function share() {
-  const text = `${window._resultEmoji} 오늘 나는 ${window._bioAge}살처럼 살았다\n"${window._resultTitle}"\n\n나도 해봐 👉 오늘 나 몇 살처럼 살았어? AI 판정기`;
-  if (navigator.share) {
-    navigator.share({ title: "오늘 나 몇 살처럼 살았어?", text });
-  } else {
-    navigator.clipboard.writeText(text);
-    alert("클립보드에 복사됐어! 붙여넣기해서 공유해줘 ㅋㅋ");
+  function startQuiz() {
+    cur = 0; answers = [];
+    document.getElementById('screen-intro').style.display = 'none';
+    document.getElementById('screen-quiz').style.display = 'block';
+    renderQ(0);
   }
-}
 
-function retry() {
-  document.getElementById("result").style.display = "none";
-  document.getElementById("intro").style.display = "block";
-  document.getElementById("progress").style.width = "0%";
-}
+  function renderQ(idx) {
+    const q = QUESTIONS[idx];
+    document.getElementById('prog-fill').style.width = (idx / QUESTIONS.length * 100) + '%';
+    document.getElementById('prog-count').textContent = `${idx+1} / ${QUESTIONS.length}`;
+    document.getElementById('back-btn').disabled = idx === 0;
+    const card = document.getElementById('qcard');
+    card.style.animation = 'none'; card.offsetHeight; card.style.animation = '';
+    card.innerHTML = `
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-num">질문 ${idx+1}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="options">
+        ${q.options.map((o,i) => `
+          <button class="option-btn" onclick="pick(${i},${o.score})">
+            <span>${o.text}</span>
+          </button>`).join('')}
+      </div>`;
+  }
+
+  function pick(idx, score) {
+    document.querySelectorAll('.option-btn').forEach(b => b.style.pointerEvents = 'none');
+    document.querySelectorAll('.option-btn')[idx].classList.add('selected');
+    answers[cur] = score;
+    setTimeout(() => { cur++; if (cur < QUESTIONS.length) renderQ(cur); else showResult(); }, 380);
+  }
+
+  function goBack() {
+    if (cur === 0) return;
+    answers.pop(); cur--; renderQ(cur);
+  }
+
+  function showResult() {
+    document.getElementById('screen-quiz').style.display = 'none';
+    const el = document.getElementById('screen-result');
+    el.style.display = 'block';
+
+    const total = answers.reduce((a,b) => a+b, 0);
+    const bioAge = Math.max(16, Math.min(99, 20 + Math.round(total * 0.6)));
+    const gi = AGE_BRACKETS.findIndex(max => bioAge <= max);
+    const g = RESULTS[gi];
+
+    el.innerHTML = `
+      <div class="result-outer ${g.key}">
+        <div class="result-card">
+          <div class="result-hero">
+            <span class="age-number" id="age-num">0</span>
+            <div class="age-label">살처럼 살았습니다</div>
+            <span class="result-emoji">${g.emoji}</span>
+            <div class="result-badge">${g.badge}</div>
+            <div class="result-title">${g.title}</div>
+          </div>
+          <div class="advice-section">
+            <div class="advice-box">
+              <div class="advice-tag">💬 한마디</div>
+              <div class="advice-text">${g.advice}</div>
+            </div>
+            <div class="ad-wrap">
+              <ins class="kakao_ad_area" style="display:none;"
+                data-ad-unit="DAN-PVu656ucRpjzw2zW"
+                data-ad-width="320" data-ad-height="50"></ins>
+            </div>
+            <div class="action-btns">
+              <button class="primary-btn" onclick="retry()">🔄 다시 해보기</button>
+              <button class="secondary-btn" onclick="shareResult()">🔗 결과 공유하기</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    setTimeout(() => animateAge('age-num', bioAge), 200);
+    if (gi === 0) launchConfetti();
+  }
+
+  function animateAge(id, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let n = 0; const step = Math.ceil(target / 30);
+    const t = setInterval(() => {
+      n = Math.min(n + step, target);
+      el.textContent = n;
+      if (n >= target) clearInterval(t);
+    }, 40);
+  }
+
+  function retry() {
+    cur = 0; answers = [];
+    document.getElementById('screen-result').style.display = 'none';
+    document.getElementById('screen-intro').style.display = 'block';
+  }
+
+  function shareResult() {
+    navigator.clipboard.writeText(location.href).then(() => {
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    });
+  }
 </script>
 </body>
 </html>
